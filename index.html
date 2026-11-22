@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Quiz Police des mots</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday learning app with the brand's police humour, official but friendly
+   IDEA an avis de contravention from the Police des mots: each fault is a ticket, the wrong form gets stamped
+   PICTURE the ticket of the day, large, two formulations to judge, a red « Verbalisé » stamp
+   COLOUR marine band on top, white paper, green for « on dit », blue for actions, red only for faults
+   TYPE Barlow Condensed 800 for titles and figures + Barlow for text
+   LAYOUT laptop: title band, ticket left, actions right; phone: title, ticket, actions, bottom nav */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#061427);--band:light-dark(#0b2545,#030c1a);--paper:light-dark(#ffffff,#0d2240);--soft:light-dark(#eef4fc,#0a1c35);--ink:light-dark(#0b2545,#e8f0fb);--muted:light-dark(#4b5f7c,#9db1cc);--line:light-dark(#d3ddeb,#21385b);--green:light-dark(#0f8f4f,#3fcf83);--greenbg:light-dark(#e6f6ee,#0c3326);--blue:light-dark(#1561d6,#5a9bff);--red:light-dark(#d32f2f,#ff6b6b);--redbg:light-dark(#fdecec,#3a1418)}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 Barlow,system-ui,sans-serif;overflow-x:clip}
+h1,h2,.big,.brand b,.act b,.rank,.tk-h,.stat b{font-family:'Barlow Condensed',Barlow,sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,4vw,env(safe-area-inset-left,0px));padding-right:max(16px,4vw,env(safe-area-inset-right,0px))}
+.narrow{max-width:820px}
+.top{background:var(--band);color:#fff;padding-top:env(safe-area-inset-top,0px)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+.brand{display:flex;gap:10px;align-items:center;color:#fff;text-decoration:none}
+.brand b{display:block;font-weight:800;font-size:23px;line-height:1}
+.brand small{display:block;font-size:13px;color:#c9d8ee;margin-top:3px}
+.nav{display:flex;gap:4px}
+.nav a{display:flex;align-items:center;gap:8px;color:#c9d8ee;text-decoration:none;padding:10px 14px;border-radius:999px;font-weight:600;min-height:44px}
+.nav a:hover{color:#fff}
+.nav a.on{background:#14a05a;color:#fff}
+.nav svg{width:20px;height:20px;flex:none}
+.nav a:focus-visible,.brand:focus-visible{outline:3px solid #5a9bff;outline-offset:2px}
+.hero{background:var(--band);color:#fff;padding:6px 0 100px}
+.hero h1{font-weight:800;font-size:clamp(38px,6vw,52px);line-height:1.05;letter-spacing:-.01em;margin:6px 0 8px;text-wrap:balance}
+.hero p{margin:0;color:#c9d8ee;max-width:62ch}
+.hero .streak{margin-top:6px;color:#8fe0b4;font-weight:600}
+.body{margin-top:-76px;padding-bottom:40px}
+.home{display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){.home{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);align-items:start}.chr{grid-template-columns:280px minmax(0,1fr)!important;align-items:start}.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}}
+.ticket{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 32px rgb(3 12 26/.2);overflow:hidden}
+.tk-h{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 20px;background:#1561d6;color:#fff;font-weight:700;font-size:19px}
+.chip{background:rgb(255 255 255/.2);border-radius:999px;padding:3px 12px;font:600 14px/1.5 Barlow,sans-serif;white-space:nowrap}
+.tk-b{padding:20px;background:radial-gradient(circle,var(--line) 2.2px,transparent 2.8px) 0 0/14px 7px repeat-x}
+.ask{margin:6px 0 14px;font-weight:600;color:var(--muted)}
+.opts{display:grid;gap:12px}
+.opt{position:relative;display:block;width:100%;text-align:left;font:500 18px/1.4 Barlow,sans-serif;color:var(--ink);background:var(--soft);border:2px solid var(--line);border-radius:14px;padding:16px 18px;cursor:pointer;min-height:64px}
+.opt:hover:not(:disabled){border-color:var(--blue)}
+.opt:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.opt:disabled{cursor:default}
+.opt.good{background:var(--greenbg);border-color:var(--green)}
+.opt.bad{background:var(--redbg);border-color:var(--red)}
+.opt.bad .txt{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px}
+.tag{display:block;font:700 15px/1.3 'Barlow Condensed',sans-serif;margin-bottom:4px;min-height:24px}
+.good .tag{color:var(--green)}
+.bad .tag{color:var(--red)}
+.stamp{position:absolute;top:9px;right:12px;transform:rotate(-7deg);border:2.5px solid var(--red);color:var(--red);border-radius:6px;padding:0 8px;font:800 18px/1.3 'Barlow Condensed',sans-serif;animation:stamp .35s ease-out both}
+@keyframes stamp{from{transform:rotate(-7deg) scale(1.9);opacity:0}to{transform:rotate(-7deg) scale(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){.stamp{animation:none}.meter i{transition:none}}
+.fb{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+.fb .res{font:800 23px/1.2 'Barlow Condensed',sans-serif;margin:0 0 8px}
+.win .res{color:var(--green)}
+.lose .res{color:var(--red)}
+.fb p{margin:0 0 10px;max-width:65ch}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:999px;border:0;background:#1561d6;color:#fff;font:700 17px Barlow,sans-serif;cursor:pointer;text-decoration:none}
+.btn.green{background:#0f8f4f}
+.btn.alt{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.acts{display:grid;gap:12px}
+.act{display:grid;grid-template-columns:48px minmax(0,1fr);column-gap:14px;align-items:center;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;color:var(--ink);cursor:pointer;font:inherit;box-shadow:0 6px 18px rgb(3 12 26/.12)}
+.act svg{grid-row:span 2;width:48px;height:48px}
+.act b{font-weight:800;font-size:23px;line-height:1.1}
+.act span{color:var(--muted);font-size:15px}
+.act:hover:not(:disabled){border-color:var(--blue)}
+.act:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.act:disabled{opacity:.6;cursor:default}
+.book{background:var(--soft);border-radius:16px;padding:18px 18px 20px;margin-top:12px}
+.book h2{font-weight:800;font-size:25px;line-height:1.1;margin:0 0 6px}
+.book p{margin:0;color:var(--muted)}
+.prog{display:flex;justify-content:space-between;gap:12px;color:#c9d8ee;font-weight:600;margin-top:12px}
+.meter{height:10px;background:rgb(255 255 255/.15);border-radius:99px;overflow:hidden;margin-top:8px}
+.meter i{display:block;height:100%;background:#14a05a;border-radius:99px;transition:width .3s}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 12px 32px rgb(3 12 26/.16)}
+.big{font-weight:800;font-size:clamp(64px,14vw,96px);line-height:1;letter-spacing:-.02em}
+.big small{font-size:.4em;color:var(--muted)}
+.rank{font-weight:800;font-size:27px;line-height:1.15;color:var(--green);margin:0 0 4px}
+.miss{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:10px}
+.miss li{background:var(--soft);border-radius:12px;padding:12px 14px}
+.miss s{color:var(--red);text-decoration-thickness:2px}
+.miss .k{display:block;color:var(--green);font-weight:600}
+textarea{width:100%;font:16px/1.4 Barlow,sans-serif;color:var(--ink);background:var(--soft);border:2px solid var(--line);border-radius:12px;padding:10px;margin-top:10px}
+.chr,.two{display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+.ring{position:relative;width:200px;height:200px;margin:0 auto}
+.ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.rt{fill:none;stroke:var(--line);stroke-width:10}
+.rp{fill:none;stroke:#14a05a;stroke-width:10;stroke-linecap:round;stroke-dasharray:100}
+.rp.low{stroke:var(--red)}
+.rn{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.rn b{font:800 64px/1 'Barlow Condensed',sans-serif;font-variant-numeric:tabular-nums}
+.rn span{color:var(--muted);font-size:15px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;text-align:center}
+.duo b{display:block;font:800 36px/1 'Barlow Condensed',sans-serif}
+.duo span{color:var(--muted);font-size:15px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(9em,1fr));gap:12px;margin-bottom:20px}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 8px 22px rgb(3 12 26/.14)}
+.stat b{display:block;font-weight:800;font-size:40px;line-height:1;white-space:nowrap}
+.stat span{color:var(--muted);font-size:15px}
+.h2{font:800 27px/1.1 'Barlow Condensed',sans-serif;margin:0 0 14px}
+.cats{display:grid;gap:12px}
+.cat{display:grid;grid-template-columns:8.5em minmax(0,1fr) 3.5em;gap:12px;align-items:center}
+.cat .b2{height:12px;background:var(--soft);border-radius:99px;overflow:hidden}
+.cat .b2 i{display:block;height:100%;background:var(--green);border-radius:99px}
+.cat em{font-style:normal;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--muted)}
+.empty{color:var(--muted);margin:0}
+.foot{color:var(--muted);font-size:14px;padding-top:16px;padding-bottom:32px}
+.foot p{margin:0 0 4px}
+@media(max-width:760px){.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--band);justify-content:space-around;gap:0;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));border-top:1px solid rgb(255 255 255/.12)}.nav a{flex:1;max-width:100px;flex-direction:column;gap:2px;padding:6px 4px;font-size:13px;border-radius:12px}body{padding-bottom:84px}.bar{min-height:62px}}
+@media(max-width:420px){.tk-b{padding:16px}.opt{font-size:17px;padding:14px}.panel{padding:18px}}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="wrap bar">
+<a class="brand" href="#accueil" aria-label="Police des mots, accueil">
+<svg width="34" height="40" viewBox="0 0 40 46" aria-hidden="true"><path d="M20 2 37 8v14c0 11-7.5 18.5-17 22C10.5 40.5 3 33 3 22V8z" fill="#14a05a"/><path d="M20 7 32 11.5V22c0 8-5.2 13.6-12 16.4C13.2 35.6 8 30 8 22V11.5z" fill="#1561d6"/><path d="m13.5 22.5 4.5 4.5 8.5-9" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<span><b>Police des mots</b><small>J’AI HORREUR DES FAUTES. L’OFFICIEL</small></span>
+</a>
+<nav class="nav" aria-label="Navigation">
+<a href="#accueil" data-v="accueil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z"/></svg><span>Accueil</span></a>
+<a href="#quiz" data-v="quiz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h9"/></svg><span>Quiz</span></a>
+<a href="#chrono" data-v="chrono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="7"/><path d="M12 13V9.5M10 3h4"/></svg><span>Chrono</span></a>
+<a href="#progres" data-v="progres"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 20v-8M12 20V5M19 20v-5"/></svg><span>Progrès</span></a>
+</nav>
+</div>
+</header>
+<main id="app"></main>
+<script>
+{
+const RAW=[
+["P","Montez, le bureau du proviseur est au premier étage.","Montez en haut, le bureau du proviseur est au premier étage.","« Monter », c’est déjà aller vers le haut. Ajouter « en haut » répète la même idée : c’est un pléonasme.","Même piège avec « descendre en bas » : on descend, tout simplement."],
+["P","Il fait beau, sortons !","Il fait beau, sortons dehors !","« Sortir » signifie déjà « aller dehors ». Le mot « dehors » n’ajoute rien.","On peut dire « allons dehors » ou « sortons », mais pas les deux à la fois."],
+["P","La correction prendra des jours, voire des semaines.","La correction prendra des jours, voire même des semaines.","« Voire » signifie déjà « et même ». L’Académie française déconseille donc « voire même ».","Remplacez « voire » par « et même » : si vous obtenez « et même même », il y a un mot de trop."],
+["P","Aujourd’hui, beaucoup d’élèves révisent sur leur téléphone.","Au jour d’aujourd’hui, beaucoup d’élèves révisent sur leur téléphone.","« Aujourd’hui » vient déjà de « au jour d’hui », « hui » voulant dire « ce jour ». « Au jour d’aujourd’hui » répète donc l’idée.","Pour insister, dites « de nos jours » ou « actuellement »."],
+["P","Les deux services vont collaborer sur ce dossier.","Les deux services vont collaborer ensemble sur ce dossier.","« Collaborer » signifie « travailler avec ». Le mot « ensemble » est de trop.","Même piège avec « s’entraider mutuellement » ou « se réunir ensemble »."],
+["P","Prévoyez vos pièces d’identité pour le concours.","Prévoyez à l’avance vos pièces d’identité pour le concours.","« Prévoir », c’est « voir avant ». « À l’avance » répète cette idée.","Le préfixe « pré- » signifie « avant » : prévoir et prédire contiennent déjà l’idée d’avance."],
+["C","Si j’avais su, je serais venu plus tôt.","Si j’aurais su, je serais venu plus tôt.","Après le « si » de condition, on n’emploie jamais le conditionnel. On met l’imparfait ou le plus-que-parfait (« si j’avais su ») ; le conditionnel va dans l’autre partie de la phrase.","Retenez : « Les scies n’aiment pas les raies. » Pas de « si » suivi d’un verbe en « -rais »."],
+["C","Vous dites toujours la vérité.","Vous disez toujours la vérité.","Au présent, « dire » donne « vous dites », comme « faire » donne « vous faites ».","Attention : ses dérivés « contredire, interdire, prédire, médire » font bien « vous contredisez, vous interdisez »."],
+["C","Ils croient en leur réussite.","Ils croivent en leur réussite.","« Croire » fait « ils croient » au présent. La forme « croivent » n’existe pas.","Pensez à « voir » : ils voient, ils croient. Au subjonctif aussi : qu’ils croient."],
+["C","Après qu’il est parti, la réunion a commencé.","Après qu’il soit parti, la réunion a commencé.","« Après que » présente un fait qui a réellement eu lieu : on emploie l’indicatif. C’est « avant que » qui demande le subjonctif.","Avant que + subjonctif, après que + indicatif."],
+["C","Je résous cet exercice en cinq minutes.","Je résouds cet exercice en cinq minutes.","« Résoudre » perd son « d » au présent du singulier : je résous, tu résous, il résout.","Même chose pour « dissoudre » : je dissous, il dissout."],
+["C","Les candidats sont partis à six heures.","Les candidats ont parti à six heures.","« Partir » se conjugue avec l’auxiliaire « être » aux temps composés, et son participe s’accorde avec le sujet.","Aller, venir, partir, arriver, rester : ces verbes prennent « être »."],
+["A","Elle s’est permis de répondre au directeur.","Elle s’est permise de répondre au directeur.","On « permet à » soi-même : « se » est un complément indirect. Le participe passé ne s’accorde donc pas.","Même cas : elle s’est plu, elle s’est souri, ils se sont parlé."],
+["A","Les orateurs se sont succédé à la tribune.","Les orateurs se sont succédés à la tribune.","On « succède à » quelqu’un : « se » est un complément indirect, donc pas d’accord.","Posez la question : succéder à qui ? Si la réponse commence par « à », pas d’accord."],
+["A","Voici les lettres que j’ai écrites.","Voici les lettres que j’ai écrit.","Avec « avoir », le participe s’accorde avec le complément d’objet direct placé avant le verbe. Ici, « que » reprend « les lettres ».","Demandez-vous : j’ai écrit quoi ? « Que », c’est-à-dire les lettres, est placé avant : on accorde."],
+["A","Ils se sont lavé les mains.","Ils se sont lavés les mains.","Le complément d’objet direct est « les mains », placé après le verbe. Le participe reste invariable.","Comparez : « ils se sont lavés » (ils ont lavé eux-mêmes) mais « ils se sont lavé les mains »."],
+["A","C’est une espèce de cahier spécial.","C’est un espèce de cahier spécial.","« Espèce » est un nom féminin. Le déterminant s’accorde avec lui, et non avec le nom qui suit.","Une espèce de cahier, une espèce de garçon : toujours « une »."],
+["A","Quelle que soit la difficulté, il faut persévérer.","Quelque soit la difficulté, il faut persévérer.","Devant le verbe « être », on écrit « quel que » en deux mots, et « quel » s’accorde avec le sujet : quel que soit le sujet, quelle que soit la difficulté, quels que soient les obstacles.","Si « soit » ou « soient » suit, écrivez en deux mots."],
+["A","Quatre-vingts candidats ont été admis.","Quatre-vingt candidats ont été admis.","« Vingt » prend un « s » quand il est multiplié et qu’aucun autre nombre ne le suit.","Quatre-vingts, mais quatre-vingt-deux. Même règle pour « cent » : deux cents, mais deux cent dix."],
+["A","Le car a parcouru deux mille kilomètres.","Le car a parcouru deux milles kilomètres.","« Mille », quand il indique un nombre, est invariable.","Deux mille, trois mille, dix mille : jamais de « s »."],
+["K","Je vais chez le coiffeur.","Je vais au coiffeur.","Devant le nom d’une personne, on emploie « chez ». « À » s’emploie devant un lieu.","On va chez le médecin, mais à la pharmacie ; chez le boulanger, mais à la boulangerie."],
+["K","Je me rappelle cette histoire.","Je me rappelle de cette histoire.","On « se rappelle quelque chose » (construction directe), mais on « se souvient de quelque chose ».","Si vous voulez garder « de », employez « se souvenir » : je me souviens de cette histoire."],
+["K","Il faut pallier ce manque de professeurs.","Il faut pallier à ce manque de professeurs.","« Pallier » se construit directement, sans « à » : on pallie un problème.","Ne confondez pas avec « remédier à », qui prend bien « à » : on remédie à un manque, on pallie un manque."],
+["K","C’est de cela qu’il s’agit.","C’est de cela dont il s’agit.","« Dont » contient déjà la préposition « de ». Avec « de cela », il faut « que », sinon « de » est répété.","Deux tournures justes : « c’est de cela qu’il s’agit » ou « c’est cela dont il s’agit »."],
+["K","Bien qu’il pleuve, nous irons au marché.","Malgré qu’il pleuve, nous irons au marché.","L’Académie française recommande d’éviter « malgré que ». On emploie « bien que » ou « quoique », suivis du subjonctif.","Gardez « malgré » devant un nom : malgré la pluie, nous irons au marché."],
+["K","Voici ce dont j’ai besoin.","Voici ce que j’ai besoin.","On a besoin de quelque chose. Le relatif qui reprend « de » est « dont ».","Même chose : ce dont je parle, ce dont je me souviens."],
+["H","Il s’est trompé de salle.","Il c’est trompé de salle.","Devant le participe passé d’un verbe pronominal, on écrit « s’est », c’est-à-dire « se » + « est ».","Mettez la phrase à la première personne : « je me suis trompé ». Si « me » apparaît, c’est « s’est »."],
+["H","Il est censé arriver à Bouaké à sept heures.","Il est sensé arriver à Bouaké à sept heures.","« Censé » signifie « supposé ». « Sensé » signifie « qui a du bon sens ».","Remplacez par « supposé » : si la phrase marche, écrivez « censé »."],
+["H","Je suis prêt à composer.","Je suis près à composer.","« Prêt à » signifie « préparé pour ». « Près de » signifie « sur le point de » ou « à côté de ».","« Prêt » est un adjectif : il s’accorde (elles sont prêtes). « Près » ne change jamais."],
+["H","Je révise tous les jours.","Je révise tout les jours.","Devant « les jours », masculin pluriel, « tout » s’accorde : tous.","Tout le mois, toute la semaine, tous les jours, toutes les heures."],
+["H","Je vous envoie le dossier ce soir.","Je vous envoi le dossier ce soir.","« Envoie » est le verbe « envoyer » au présent. « Envoi », sans « e », est le nom : un envoi.","Si vous pouvez mettre « un » devant, c’est le nom ; sinon, c’est le verbe : j’envoie."],
+["H","Il faut davantage de salles de classe.","Il faut d’avantage de salles de classe.","« Davantage », qui signifie « plus », s’écrit en un seul mot.","Remplacez par « plus » : si la phrase marche, c’est « davantage ». « Un avantage » est un autre mot."],
+["V","Nous partons de l’aéroport d’Abidjan.","Nous partons de l’aréoport d’Abidjan.","Le mot est formé sur « aéro- », qui renvoie à l’air, comme « aérien » ou « aération ».","Aéroport, aérien, aération : toujours « aé » au début."],
+["V","Il a été victime d’un infarctus.","Il a été victime d’un infractus.","Le mot s’écrit et se prononce « in-farc-tus ». « Infractus » est une déformation, sans doute influencée par « fracture ».","Découpez le mot : in-farc-tus."],
+["V","Ce travail sera bien rémunéré.","Ce travail sera bien rénuméré.","Le mot vient du latin « remunerare », « récompenser » : on écrit « ré-mu-né-rer », le « m » avant le « n ».","Rémunérer, rémunération : d’abord le « m », ensuite le « n »."],
+["V","La boutique va rouvrir lundi.","La boutique va réouvrir lundi.","Le verbe est « rouvrir ». Le nom, lui, est bien « réouverture ».","Rouvrir, réouverture : le verbe et le nom ne se forment pas de la même façon."],
+["V","Il est venu quand même.","Il est venu comme même.","L’expression correcte est « quand même », qui signifie « malgré tout ».","Pensez à « quand bien même » : on garde « quand »."],
+["V","Après la fête, la salle était sens dessus dessous.","Après la fête, la salle était sans dessus dessous.","Ici, « sens » désigne la direction : ce qui devait être dessus se retrouve dessous.","Même famille que « sens devant derrière »."],
+["V","Ce cours est très compréhensible.","Ce cours est très compréhensif.","« Compréhensible » : qu’on peut comprendre. « Compréhensif » : qui comprend les autres, indulgent.","Un texte est compréhensible ; un professeur est compréhensif."]
+];
+const D=RAW.map((r,i)=>({id:i,c:r[0],ok:r[1],ko:r[2],ex:r[3],tip:r[4]}));
+const CAT={P:"Pléonasmes",C:"Conjugaison",A:"Accords",K:"Constructions",H:"Homophones",V:"Vocabulaire"};
+const KEY="jhdf-police-des-mots-v1";
+const app=document.getElementById("app");
+const fix=t=>t.replace(/ ([!?:;»])/g," $1").replace(/« /g,"« ");
+const pl=(n,w)=>n+" "+w+(n>1?"s":"");
+const dkey=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const today=()=>dkey(new Date());
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const def=()=>({n:0,ok:0,cat:{},err:[],best:0,days:[],dly:null});
+const load=()=>{try{return Object.assign(def(),JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){return def()}};
+let S=load();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const rec=(it,good)=>{S.n++;if(good)S.ok++;const c=S.cat[it.c]||[0,0];c[1]++;if(good)c[0]++;S.cat[it.c]=c;const i=S.err.indexOf(it.id);if(!good&&i<0)S.err.push(it.id);if(good&&i>=0)S.err.splice(i,1);const t=today();if(!S.days.includes(t))S.days.push(t);if(S.days.length>400)S.days=S.days.slice(-400);save()};
+const streak=()=>{const set=new Set(S.days);const d=new Date();if(!set.has(dkey(d)))d.setDate(d.getDate()-1);let n=0;while(set.has(dkey(d))){n++;d.setDate(d.getDate()-1)}return n};
+const now=new Date();
+const dayIdx=Math.floor(Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())/864e5);
+const dayNo=Math.floor((Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())-Date.UTC(now.getFullYear(),0,0))/864e5);
+const daily=()=>D[(dayIdx*7)%D.length];
+if(!S.dly||S.dly.d!==today()){S.dly={d:today(),ord:shuffle(["ok","ko"]),pick:null};save()}
+const dateFr=now.toLocaleDateString("fr-FR",{day:"numeric",month:"long"});
+let Q=null,R=false;
+let C={st:"idle",end:0,sc:0,errs:0,it:null,ord:null,pick:null,lock:false,t:null,deck:[],nb:false};
+
+const card=(it,ord,pick,o)=>{
+  const done=!!pick;
+  const opt=k=>{const g=k==="ok";const cls=done?(g?"good":"bad"):"";
+    return `<button class="opt ${cls}" data-pick="${k}"${done?" disabled":""}>${done?`<span class="tag">${g?"On dit":"On ne dit pas"}</span>`:""}<span class="txt">${g?it.ok:it.ko}</span>${done&&!g?`<span class="stamp">Verbalisé</span>`:""}</button>`};
+  const fb=done&&!o.quick?`<div class="fb ${pick==="ok"?"win":"lose"}"><p class="res">${pick==="ok"?"Bien vu, agent !":"Raté ! La bonne formulation est en vert."}</p><p><b>Pourquoi ?</b> ${it.ex}</p><p><b>Astuce.</b> ${it.tip}</p>${o.next||""}</div>`:"";
+  return `<article class="ticket"><div class="tk-h"><span>${o.head}</span><span class="chip">${CAT[it.c]}</span></div><div class="tk-b"><p class="ask">Laquelle est correcte ?</p><div class="opts">${ord.map(opt).join("")}</div>${fb}</div></article>`};
+
+const icon=(bg,g)=>`<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="${bg}"/>${g}</svg>`;
+const IQ=icon("#1561d6",`<path d="M15 17h18M15 25h18M15 33h11" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>`);
+const IC=icon("#0f8f4f",`<circle cx="24" cy="26.5" r="10" fill="none" stroke="#fff" stroke-width="3"/><path d="M24 26.5v-5M20.5 12.5h7" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`);
+const IR=icon("#d32f2f",`<path d="M33.5 24a9.5 9.5 0 1 1-3-6.9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M31.5 11.5v6h-6" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`);
+
+const vHome=()=>{
+  const st=streak(),e=S.err.length,d=S.dly;
+  return `<section class="hero"><div class="wrap"><h1>La faute du jour</h1><p>Avis de contravention du ${dateFr}. Une phrase est correcte, l’autre est en infraction : à vous de juger.</p><p class="streak">${st?`Série en cours : ${pl(st,"jour")} d’affilée.`:"Répondez chaque jour pour lancer votre série."}</p></div></section>
+  <div class="wrap body home"><div data-ctx="daily">${card(daily(),d.ord,d.pick,{head:"Contravention n° "+dayNo,next:`<div class="row"><button class="btn" data-go="quiz">Continuer avec le quiz express</button></div>`})}</div>
+  <div><div class="acts">
+  <button class="act" data-go="quiz">${IQ}<b>Quiz express</b><span>10 phrases mélangées, avec les explications</span></button>
+  <button class="act" data-go="chrono">${IC}<b>Défi chrono</b><span>60 secondes pour en juger un maximum</span></button>
+  <button class="act" data-go="revision"${e?"":" disabled"}>${IR}<b>À revoir</b><span>${e?pl(e,"règle")+" à retravailler":"Aucune erreur en attente"}</span></button>
+  </div><div class="book"><h2>Le livre ON DIT / ON NE DIT PAS</h2><p>Pour aller plus loin, le livre de J’AI HORREUR DES FAUTES. L’OFFICIEL est disponible dans la boutique en ligne.</p><div class="row"><a class="btn alt" href="https://jaihorreurdesfautes.mychariow.shop" target="_blank" rel="noopener">Voir la boutique</a></div></div></div></div>`};
+
+const newQuiz=m=>{let pool=m==="rev"?D.filter(x=>S.err.includes(x.id)):D;if(!pool.length){m="exp";pool=D}const l=shuffle(pool.slice()).slice(0,10);Q={m,ids:l.map(x=>x.id),i:0,ord:l.map(()=>shuffle(["ok","ko"])),picks:[],end:false}};
+const rank=r=>r===1?["Commissaire de la langue","Aucune faute ne vous échappe."]:r>=.8?["Inspecteur des mots","Encore quelques pièges à surveiller."]:r>=.5?["Agent de la Police des mots","Bonne base : les erreurs ci-dessous sont à revoir."]:["Agent stagiaire","Chaque erreur relevée est une règle apprise. On recommence ?"];
+const shareTxt=()=>{const s=Q.ids.filter((id,i)=>Q.picks[i]==="ok").length;return `J’ai obtenu ${s}/${Q.ids.length} au quiz « On dit / On ne dit pas » de J’AI HORREUR DES FAUTES. L’OFFICIEL. Saurez-vous faire mieux ?`};
+
+const vQuiz=()=>{
+  if(!Q)newQuiz("exp");
+  const n=Q.ids.length,title=Q.m==="rev"?"Révision de mes erreurs":"Quiz express";
+  const good=Q.picks.filter(p=>p==="ok").length;
+  if(Q.end){
+    const [rk,msg]=rank(good/n);
+    const miss=Q.ids.map((id,i)=>Q.picks[i]==="ko"?D[id]:null).filter(Boolean);
+    return `<section class="hero"><div class="wrap narrow"><h1>${title} terminé</h1><p>Voici votre bilan. Les règles manquées sont ajoutées à votre liste « À revoir ».</p></div></section>
+    <div class="wrap narrow body"><div class="panel"><div class="big">${good}<small> / ${n}</small></div><p class="rank">${rk}</p><p>${msg}</p>
+    ${miss.length?`<ul class="miss">${miss.map(x=>`<li><s>${x.ko}</s><span class="k">${x.ok}</span></li>`).join("")}</ul>`:""}
+    <div class="row"><button class="btn green" data-act="again">Rejouer</button><button class="btn alt" data-act="copy" id="cp">Copier mon score</button>${S.err.length?`<button class="btn alt" data-go="revision">Revoir mes erreurs (${S.err.length})</button>`:""}</div>
+    <textarea id="ta" rows="3" readonly hidden></textarea></div></div>`}
+  const it=D[Q.ids[Q.i]],pk=Q.picks[Q.i],w=Math.round((Q.i+(pk?1:0))/n*100);
+  return `<section class="hero"><div class="wrap narrow"><h1>${title}</h1><div class="prog"><span>Question ${Q.i+1} sur ${n}</span><span>${pl(good,"bonne réponse")}</span></div><div class="meter"><i style="width:${w}%"></i></div></div></section>
+  <div class="wrap narrow body" data-ctx="quiz">${card(it,Q.ord[Q.i],pk,{head:"Question "+(Q.i+1),next:`<div class="row"><button class="btn" data-act="next">${Q.i<n-1?"Question suivante":"Voir mon résultat"}</button></div>`})}</div>`};
+
+const nextC=()=>{if(!C.deck.length)C.deck=shuffle(D.slice());C.it=C.deck.pop();C.ord=shuffle(["ok","ko"]);C.pick=null;C.lock=false};
+const cardC=()=>card(C.it,C.ord,C.pick,{head:"Chrono",quick:true});
+const tick=()=>{const left=Math.max(0,C.end-Date.now()),s=Math.ceil(left/1000);const e=document.getElementById("sec"),r=document.getElementById("rp");if(e)e.textContent=s;if(r){r.style.strokeDashoffset=String(100-left/600);r.classList.toggle("low",s<=10)}if(left<=0)endC()};
+const startC=()=>{C.st="run";C.sc=0;C.errs=0;C.deck=shuffle(D.slice());nextC();C.end=Date.now()+60000;clearInterval(C.t);C.t=setInterval(tick,100);render()};
+const endC=()=>{clearInterval(C.t);C.st="end";C.nb=C.sc>S.best;if(C.nb){S.best=C.sc;save()}if(cur()==="chrono")render()};
+const stopC=()=>{clearInterval(C.t);C.st="idle"};
+
+const vChrono=()=>{
+  const left=C.st==="run"?Math.max(0,C.end-Date.now()):C.st==="end"?0:60000;
+  const ring=`<div class="panel"><div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="rt" cx="60" cy="60" r="52"/><circle class="rp${C.st!=="idle"&&left<=10000?" low":""}" id="rp" cx="60" cy="60" r="52" pathLength="100" style="stroke-dashoffset:${100-left/600}"/></svg><div class="rn"><b id="sec">${Math.ceil(left/1000)}</b><span>secondes</span></div></div><div class="duo"><div><b id="csc">${C.sc}</b><span>points</span></div><div><b>${S.best}</b><span>record</span></div></div></div>`;
+  let main;
+  if(C.st==="run")main=`<div id="cc" data-ctx="chrono">${cardC()}</div>`;
+  else if(C.st==="end")main=`<div class="panel"><p class="rank">${C.nb?"Nouveau record !":"Temps écoulé"}</p><div class="big">${C.sc}<small> ${C.sc>1?"points":"point"}</small></div><p>${C.errs?`${pl(C.errs,"erreur")} : les règles manquées rejoignent votre liste « À revoir ».`:"Aucune erreur : du travail de commissaire !"}</p><div class="row"><button class="btn green" data-act="cstart">Rejouer</button>${S.err.length?`<button class="btn alt" data-go="revision">Revoir mes erreurs</button>`:""}</div></div>`;
+  else main=`<div class="panel"><h2 class="h2">Prêt ?</h2><p>Le chrono démarre dès que vous appuyez. Les phrases défilent sans explication ; si vous vous trompez, vous les retrouverez dans « À revoir ».</p><div class="row"><button class="btn green" data-act="cstart">Lancer le chrono</button></div></div>`;
+  return `<section class="hero"><div class="wrap"><h1>Défi chrono</h1><p>60 secondes pour juger un maximum de phrases. Chaque bonne réponse rapporte un point.</p></div></section><div class="wrap body chr">${ring}${main}</div>`};
+
+const vProg=()=>{
+  const st=streak(),pct=S.n?Math.round(S.ok/S.n*100)+" %":"—";
+  const stats=[[S.n,"réponses données"],[pct,"de réussite"],[pl(st,"jour"),"de série en cours"],[S.best,"record au chrono"]];
+  const cats=Object.keys(CAT).map(k=>{const [o,t]=S.cat[k]||[0,0];return `<div class="cat"><span>${CAT[k]}</span><div class="b2"><i style="width:${t?Math.round(o/t*100):0}%"></i></div><em>${t?o+"/"+t:"—"}</em></div>`}).join("");
+  const errs=S.err.map(id=>D[id]);
+  const reset=R?`<div class="row"><button class="btn" style="background:#d32f2f" data-act="resetok">Oui, tout effacer</button><button class="btn alt" data-act="resetno">Annuler</button></div>`:`<div class="row"><button class="btn alt" data-act="reset">Remettre à zéro</button></div>`;
+  return `<section class="hero"><div class="wrap"><h1>Ma progression</h1><p>${S.n?"Vos résultats sur cet appareil, par famille de fautes.":"Aucune réponse pour l’instant : commencez par la faute du jour."}</p></div></section>
+  <div class="wrap body"><div class="stats">${stats.map(s=>`<div class="stat"><b>${s[0]}</b><span>${s[1]}</span></div>`).join("")}</div>
+  <div class="two"><div class="panel"><h2 class="h2">Réussite par famille</h2><div class="cats">${cats}</div></div>
+  <div class="panel"><h2 class="h2">À revoir</h2>${errs.length?`<ul class="miss">${errs.map(x=>`<li><s>${x.ko}</s><span class="k">${x.ok}</span></li>`).join("")}</ul><div class="row"><button class="btn" data-go="revision">Réviser ${errs.length>1?"ces "+errs.length+" règles":"cette règle"}</button></div>`:`<p class="empty">Aucune erreur en attente. Chaque faute manquée apparaîtra ici jusqu’à ce que vous la corrigiez.</p>`}${S.n?reset:""}</div></div></div>`};
+
+const views={accueil:vHome,quiz:vQuiz,chrono:vChrono,progres:vProg};
+const cur=()=>{const v=location.hash.slice(1);return views[v]?v:"accueil"};
+const foot=`<footer class="wrap foot"><p>Prototype : ${D.length} règles parmi les fautes les plus courantes. Votre progression reste enregistrée sur cet appareil.</p><p>J’AI HORREUR DES FAUTES. L’OFFICIEL. Quand la langue française devient une aventure.</p></footer>`;
+const render=()=>{const v=cur();app.innerHTML=fix(views[v]())+foot;document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v))};
+const route=()=>{const v=cur();if(v!=="chrono"&&C.st!=="idle")stopC();R=false;render();window.scrollTo(0,0)};
+const go=v=>{if(cur()===v&&location.hash){render();window.scrollTo(0,0)}else location.hash=v};
+const toCard=()=>{const t=document.querySelector(".ticket,.panel");if(t&&t.getBoundingClientRect().top<0)t.scrollIntoView({block:"start",behavior:"smooth"})};
+
+const pick=(ctx,k)=>{
+  if(ctx==="daily"){if(S.dly.pick)return;S.dly.pick=k;rec(daily(),k==="ok");render();return}
+  if(ctx==="quiz"&&Q&&!Q.picks[Q.i]){Q.picks[Q.i]=k;rec(D[Q.ids[Q.i]],k==="ok");render();return}
+  if(ctx==="chrono"&&C.st==="run"&&!C.lock){C.lock=true;C.pick=k;const g=k==="ok";if(g)C.sc++;else C.errs++;rec(C.it,g);const cc=document.getElementById("cc");if(cc)cc.innerHTML=fix(cardC());const sc=document.getElementById("csc");if(sc)sc.textContent=C.sc;setTimeout(()=>{if(C.st!=="run")return;nextC();const c2=document.getElementById("cc");if(c2)c2.innerHTML=fix(cardC())},g?350:800)}};
+
+const act=(a,el)=>{
+  if(a==="next"){if(Q.i<Q.ids.length-1)Q.i++;else Q.end=true;render();toCard()}
+  else if(a==="again"){newQuiz(Q&&Q.m==="rev"&&S.err.length?"rev":"exp");render();window.scrollTo(0,0)}
+  else if(a==="copy"){const t=shareTxt();const fall=()=>{const ta=document.getElementById("ta");if(ta){ta.hidden=false;ta.value=t;ta.select()}el.textContent="Copiez le texte ci-dessous"};try{navigator.clipboard.writeText(t).then(()=>{el.textContent="Score copié"},fall)}catch(e){fall()}}
+  else if(a==="cstart")startC();
+  else if(a==="reset"){R=true;render()}
+  else if(a==="resetno"){R=false;render()}
+  else if(a==="resetok"){S=def();S.dly={d:today(),ord:shuffle(["ok","ko"]),pick:null};save();R=false;render()}};
+
+document.addEventListener("click",e=>{
+  const p=e.target.closest("[data-pick]");
+  if(p){if(!p.disabled){const c=p.closest("[data-ctx]");if(c)pick(c.dataset.ctx,p.dataset.pick)}return}
+  const g=e.target.closest("[data-go]");
+  if(g){const v=g.dataset.go;if(v==="revision"){newQuiz("rev");go("quiz")}else{if(v==="quiz"&&(!Q||Q.end||Q.m!=="exp"))newQuiz("exp");go(v)}return}
+  const a=e.target.closest("[data-act]");
+  if(a)act(a.dataset.act,a)});
+window.addEventListener("hashchange",route);
+window.claude?.hot?.snapshot?.(()=>({Q}));
+const start=d=>{if(d&&d.Q)Q=d.Q;render()};
+window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
+}
+</script>
+</body>
+</html>
